@@ -45,6 +45,10 @@ div[data-testid="stMetricValue"] {{ color: {NAVY}; }}
 }}
 .header h1 {{ color: white !important; margin: 0; font-size: 1.7rem; }}
 .header p {{ color: #DDE6EE; margin: 4px 0 0 0; }}
+/* Hide Streamlit's toolbar (GitHub, Fork, menu and deploy buttons) so
+   viewers only see the dashboard. The sidebar toggle stays. */
+[data-testid="stToolbar"], [data-testid="stToolbarActions"], [data-testid="stAppDeployButton"],
+[data-testid="stMainMenu"], #MainMenu, .stDeployButton, footer {{ display: none !important; }}
 </style>
 """
 

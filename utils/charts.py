@@ -12,6 +12,12 @@ def show(fig, height=340):
     st.plotly_chart(fig, width="stretch", theme=None)
 
 
+def no_data(title):
+    """Placeholder when a question has no answers yet (or isn't published)."""
+    st.markdown(f"**{title}**")
+    st.caption("No data yet.")
+
+
 def groups(df, by):
     """Series used to split the chart. 'All' when no breakdown is chosen."""
     if by is None:
@@ -23,6 +29,8 @@ def percent_yes(df, flag, by, title, color=TEAL):
     """Bar of the % of respondents where `flag` is 1 / True (NaN excluded)."""
     d = pd.DataFrame({"group": groups(df, by), "y": flag.astype(float)}).dropna()
     t = d.groupby("group")["y"].agg(pct="mean", n="size").reset_index()
+    if t.empty:
+        return no_data(title)
     t["pct"] *= 100
     fig = px.bar(t, x="pct", y="group", orientation="h", text=t["pct"].round().astype(int).astype(str) + "%",
                  custom_data=["n"], title=title, color_discrete_sequence=[color])
@@ -37,6 +45,8 @@ def distribution(df, var, value_labels, by, title, ordered=False):
     d["answer"] = d["v"].map(value_labels)
     d = d.dropna(subset=["answer"])
     t = d.groupby(["group", "answer"]).size().reset_index(name="n")
+    if t.empty:
+        return no_data(title)
     t["pct"] = 100 * t["n"] / t.groupby("group")["n"].transform("sum")
 
     order = [lab for lab in value_labels.values() if lab in set(t["answer"])]
@@ -58,8 +68,10 @@ def multi_select(df, var, value_labels, title):
     rows = []
     for code, lab in value_labels.items():
         col = f"{var}_{str(code).replace('-', '_')}"
-        if col in base:
+        if col in base and len(base):
             rows.append({"option": lab, "pct": 100 * base[col].mean()})
+    if not rows:
+        return no_data(title)
     t = pd.DataFrame(rows).sort_values("pct")
     fig = px.bar(t, x="pct", y="option", orientation="h", title=title,
                  text=t["pct"].round().astype(int).astype(str) + "%", color_discrete_sequence=[NAVY])
@@ -75,8 +87,10 @@ def before_after(df, before, after, value_labels, title):
         base = df[df[var].notna()]
         for code, lab in value_labels.items():
             col = f"{var}_{str(code).replace('-', '_')}"
-            if col in base:
+            if col in base and len(base):
                 rows.append({"option": lab, "when": when, "pct": 100 * base[col].mean()})
+    if not rows:
+        return no_data(title)
     t = pd.DataFrame(rows)
     fig = px.bar(t, x="pct", y="option", color="when", orientation="h", barmode="group", title=title,
                  color_discrete_map={"Before": GREY, "Now": TEAL})
@@ -92,6 +106,8 @@ def likert(df, items, title):
         s = valid(df[var]).dropna()
         for code, pct in (s.value_counts(normalize=True) * 100).items():
             rows.append({"item": lab, "score": str(int(code)), "pct": pct})
+    if not rows:
+        return no_data(title)
     t = pd.DataFrame(rows)
     fig = px.bar(t, x="pct", y="item", color="score", orientation="h", title=title,
                  category_orders={"score": ["1", "2", "3", "4", "5"], "item": list(items.values())},
@@ -105,6 +121,8 @@ def average(df, values, by, title, color=NAVY):
     """Bar of the mean of `values` by group (used for 0-100 scores)."""
     d = pd.DataFrame({"group": groups(df, by), "v": values}).dropna()
     t = d.groupby("group")["v"].agg(mean="mean", n="size").reset_index()
+    if t.empty:
+        return no_data(title)
     fig = px.bar(t, x="mean", y="group", orientation="h", text=t["mean"].round().astype(int),
                  custom_data=["n"], title=title, color_discrete_sequence=[color])
     fig.update_traces(hovertemplate="%{y}: %{x:.1f} (n=%{customdata[0]})<extra></extra>")

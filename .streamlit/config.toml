@@ -8,7 +8,7 @@ font = "sans serif"
 
 [client]
 showSidebarNavigation = true
-toolbarMode = "minimal"
+toolbarMode = "viewer"   # no developer options for people viewing the app
 
 [server]
 maxUploadSize = 200

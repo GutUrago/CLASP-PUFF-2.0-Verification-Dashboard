@@ -1,0 +1,9 @@
+# credentials never belong in the repo
+.streamlit/secrets.toml
+*.pem
+
+# survey data and the sample roster, even anonymised: nothing in data/
+data/
+
+__pycache__/
+*.pyc
