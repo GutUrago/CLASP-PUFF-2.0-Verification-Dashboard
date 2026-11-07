@@ -123,10 +123,9 @@ with tabs[2]:
         distribution(df, "B0a", L.CONTACTED_BY, by, "Who told them about this survey (B0a)")
     with b:
         distribution(df, "D1b", L.NOT_RECEIVED, by, "Why it was not received or installed (D1b)")
-        distribution(df, "B10a", L.DESC_MATCH, by, "Phone: description vs sales record (B10a)")
         distribution(df, "serial_access", L.SERIAL_ACCESS, by, "In-person: serial number (M2)")
-    percent_yes(df, yes("serial_verified"), by,
-                "In-person: serial number matches the record (M3)")
+        percent_yes(df, yes("serial_verified"), by,
+                    "In-person: serial number matches the record (M3)")
 
     st.markdown("#### Ownership and use")
     a, b = st.columns(2)

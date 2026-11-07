@@ -15,7 +15,6 @@ YESNO_PARTIAL = {1: "Yes", 2: "Partially", 0: "No", -99: "Don't know"}
 # B0a - who contacted the respondent before the survey
 CONTACTED_BY = {1: "The company", 2: "Company sales agent", 3: "Laterite", -96: "Other",
                 -99: "Don't know"}
-DESC_MATCH = {1: "Matches", 2: "Partly matches", 0: "Does not match", -99: "Could not describe"}
 
 EDUCATION = {0: "Never attended", 1: "Early childhood", 2: "Primary", 3: "Secondary", 4: "Tertiary"}
 

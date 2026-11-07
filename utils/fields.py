@@ -20,7 +20,7 @@ FIELDS = {
         "response", "consent", "availability", "consent_ok", "interview_ok",
         "appliance_received", "reached_end", "survey_status", "survey_status_lbl",
     ],
-    "Appliance confirmation": ["B0", "B0a", "B1", "B1a", "B1b", "B2", "B8", "B10a"],
+    "Appliance confirmation": ["B0", "B0a", "B1", "B1a", "B1b", "B2", "B8"],
     "Household": ["C1", "C2", "C3", "C4_screen", "C4_1", "C4_2", "C4_3", "C4_4", "C4_5", "C4_6", "C5"],
     "Appliance use": ["D1", "D1a", "D1b", "D2", "D3", "D4", "D4a", "D5", "D5b", "D6b", "D7", "D8"],
     "Energy": [
