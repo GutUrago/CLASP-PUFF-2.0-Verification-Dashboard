@@ -5,5 +5,9 @@
 # survey data and the sample roster, even anonymised: nothing in data/
 data/
 
+# Python environments and cache
+.venv/
+venv/
+env/
 __pycache__/
 *.pyc
