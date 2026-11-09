@@ -30,7 +30,7 @@ DK = [-97, -98, -99]  # not applicable / refused / don't know
 
 # Only fetch submissions received after this date. A date other than 0 also
 # avoids SurveyCTO's limit of one full download (date=0) every 5 minutes.
-FETCH_FROM = datetime(2026, 11, 1, tzinfo=timezone.utc)
+FETCH_FROM = datetime(2026, 11, 8, tzinfo=timezone.utc)
 
 # How often the data is pulled again on its own (hours). An open dashboard
 # refreshes itself on this schedule; the Refresh button pulls immediately.
