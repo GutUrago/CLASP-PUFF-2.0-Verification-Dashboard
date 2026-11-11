@@ -1,6 +1,6 @@
 # Value labels for the coded variables used in the dashboard.
 # Taken from the choices sheet of the latest coded form
-# (CLASP PUFF2 Verification Round 1, version 2611070342), shortened for charts.
+# (CLASP PUFF2 Verification Round 1, version 2611110448), shortened for charts.
 # If the form's choices change, update the codes here.
 
 COUNTRY = {1: "Ethiopia", 2: "Kenya", 3: "Nigeria"}
@@ -16,7 +16,8 @@ YESNO_PARTIAL = {1: "Yes", 2: "Partially", 0: "No", -99: "Don't know"}
 CONTACTED_BY = {1: "The company", 2: "Company sales agent", 3: "Laterite", -96: "Other",
                 -99: "Don't know"}
 
-EDUCATION = {0: "Never attended", 1: "Early childhood", 2: "Primary", 3: "Secondary", 4: "Tertiary"}
+EDUCATION = {0: "Never attended", 1: "Early childhood", 2: "Primary", 3: "Secondary", 4: "Tertiary",
+             -96: "Other"}
 
 # D1a - what happened to the appliance (asked when D1 = No)
 APPLIANCE_FATE = {1: "Sold it", 2: "Gave it away", 3: "Stolen", 4: "Broke down, discarded",
@@ -26,16 +27,29 @@ APPLIANCE_FATE = {1: "Sold it", 2: "Gave it away", 3: "Stolen", 4: "Broke down, 
 NOT_RECEIVED = {1: "Waiting for delivery", 2: "Delivered, not installed",
                 3: "Installation not finished", 4: "Order cancelled", 5: "Could not pay",
                 6: "Site not suitable", -96: "Other", -99: "Don't know"}
+# D2 - currently using it
+USING_NOW = {1: "Yes", 0: "No, stopped using it", 2: "No, not used yet"}
+# D3 - why it is not being used (stopped, or not used yet)
 NOT_USING = {1: "Stopped working", 2: "In repair", 3: "Returned", 4: "Could not afford",
-             5: "Got sick", 6: "Don't know how to use", 7: "Not useful", -96: "Other"}
+             5: "Got sick", 6: "Don't know how to use", 7: "Not useful", 8: "Not needed yet",
+             9: "Water source dried up", -96: "Other"}
 USE_PURPOSE = {1: "Non-income", 2: "Income-generating", 3: "Both"}
 PUMP_USE = {1: "Irrigating crops", 2: "Household water", 3: "Watering livestock",
             4: "Selling water", -96: "Other"}
-DECISION = {0: "Respondent", 1: "Spouse", 2: "Parent", 3: "Son/daughter", 11: "Jointly with partner",
-            -96: "Other"}
+# D8 - the less common relatives (codes 4-10) are grouped as "Other relative"
+DECISION = {0: "Respondent", 11: "Jointly with partner", 1: "Spouse", 2: "Parent", 3: "Son/daughter",
+            4: "Other relative", 5: "Other relative", 6: "Other relative", 7: "Other relative",
+            8: "Other relative", 9: "Other relative", 10: "Other relative", -96: "Other"}
+# D7 - how they heard about the appliance
+HEARD_ABOUT = {1: "Demonstration", 2: "Fliers", 3: "Friends/family/neighbours", 4: "Radio/TV",
+               5: "Social media", 6: "At the shop", 7: "Company marketing", 8: "Local sales agent",
+               -96: "Other", -99: "Don't know"}
 
 ENERGY_SOURCE = {1: "Grid", 2: "Mini grid", 3: "Biomass", 4: "Solar home system",
                  5: "Diesel/generator", 6: "Kerosene", 7: "None", -96: "Other"}
+# E3 - energy used by the previous appliance (same codes, no "None")
+ENERGY_PREVIOUS = {1: "Grid", 2: "Mini grid", 3: "Biomass", 4: "Solar home system",
+                   5: "Diesel/generator", 6: "Kerosene", -96: "Other"}
 REPLACE = {1: "Completely replace", 2: "Complement"}
 PREVIOUS_FATE = {1: "Still used alongside", 2: "Kept as backup", 3: "Sold", 4: "Given away",
                  5: "Broke down/discarded", 6: "Traded in", -96: "Other"}
@@ -47,6 +61,12 @@ WELLBEING = {1: "Much worse", 2: "Slightly worse", 3: "No change", 4: "Slightly 
 SATISFACTION_4 = {1: "Very dissatisfied", 2: "Dissatisfied", 3: "Satisfied", 4: "Very satisfied"}
 PAYMENT = {1: "Own income/savings", 2: "Friends/family", 3: "Formal loan", 4: "Informal lender",
            5: "PAYGo/installments", -96: "Other"}
+INSURANCE = {0: "No insurance", 1: "Theft", 2: "Damage/breakdown", 3: "Crop", 4: "Health",
+             5: "Life/credit", -96: "Other", -99: "Don't know"}
+LIKELY = {1: "Not at all likely", 2: "Unlikely", 3: "Neutral/unsure", 4: "Likely", 5: "Extremely likely"}
+FUTURE_APPLIANCE = {1: "Same appliance (upgrade/additional)", 2: "Solar water pump",
+                    3: "Refrigerator/freezer", 4: "Walk-in cold room", 5: "Egg incubator/brooder",
+                    6: "Fan", 7: "Mill", 8: "Not decided", -96: "Other"}
 WARRANTY_KNOW = {1: "Yes, knows length", 2: "Yes, length unknown", 0: "No warranty",
                  -99: "Don't know"}
 

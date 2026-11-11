@@ -27,10 +27,11 @@ ROSTER_FILE = Path(__file__).parent.parent / "data" / "CLASP_PUFF_2.0_Sample_Ros
 
 # survey_status codes (calculated in the form) grouped for the progress charts
 STATUS_GROUPS = {
-    11: "Completed", 14: "Completed",
+    11: "Completed", 14: "Completed", 15: "Completed",
     12: "Purchase not confirmed", 13: "Purchase not confirmed",
     21: "Callback pending", 22: "Callback pending", 23: "Callback pending",
     31: "Not reached", 32: "Not reached", 33: "Not reached", 34: "Not reached",
+    35: "Not reached", 36: "Not reached",   # phone switched off, wrong number
     41: "Refused", 42: "Refused", 43: "Refused",
     51: "Ended early",
 }

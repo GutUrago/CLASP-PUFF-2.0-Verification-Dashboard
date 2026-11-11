@@ -143,29 +143,3 @@ with right:
                  color_discrete_sequence=[NAVY])
     fig.update_layout(yaxis=dict(autorange="reversed", title=None), xaxis_title=None)
     show(fig, 340)
-
-# ---- households to follow up ------------------------------------------------ #
-st.subheader("Households to follow up")
-follow = hh[(hh["outcome"].isin(["Callback pending", "Ended early"])) | hh["mode_mismatch"]].copy()
-follow["reason"] = follow["outcome"].where(~follow["completed"], "")
-follow.loc[follow["mode_mismatch"], "reason"] = (follow["reason"] + ", mode mismatch").str.strip(", ")
-follow = follow[["hh_id", "company", "county", "sample", "assigned_mode", "attempts",
-                 "last_attempt", "latest_status", "reason"]].sort_values("last_attempt")
-
-if CHECK_IDS_AGAINST_ROSTER:
-    not_on_roster = (df[~df["on_roster"]].groupby("hh_id")
-                     .agg(company=("company", "first"), county=("county", "first"),
-                          attempts=("KEY", "size"), last_attempt=("starttime", "max"),
-                          latest_status=("status", "last"))
-                     .reset_index().assign(sample="Not on roster", reason="ID not on roster"))
-    follow = pd.concat([follow, not_on_roster], ignore_index=True)
-
-st.caption("Callbacks still pending, interviews that ended early and mode mismatches. "
-           "Household IDs only, no personal details.")
-follow = follow.rename(columns={"hh_id": "Household", "company": "Company", "county": "County",
-                                "sample": "Sample", "assigned_mode": "Assigned mode",
-                                "attempts": "Attempts", "last_attempt": "Last attempt",
-                                "latest_status": "Latest status", "reason": "Why"})
-st.dataframe(follow, hide_index=True, width="stretch",
-             column_config={"Last attempt": st.column_config.DatetimeColumn(format="D MMM, HH:mm")})
-st.download_button("Download follow-up list (CSV)", follow.to_csv(index=False).encode(), "puff2_follow_up.csv")

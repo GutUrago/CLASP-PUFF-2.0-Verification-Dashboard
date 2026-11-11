@@ -42,18 +42,21 @@ def percent_yes(df, flag, by, title, color=TEAL):
 def distribution(df, var, value_labels, by, title, ordered=False):
     """100% stacked bar of a coded variable."""
     d = pd.DataFrame({"group": groups(df, by), "v": valid(df[var])}).dropna()
-    d["answer"] = d["v"].map(value_labels)
-    d = d.dropna(subset=["answer"])
+    # a code with no label (e.g. a choice added to the form later) is shown
+    # as "Other" rather than silently dropped
+    d["answer"] = d["v"].map(value_labels).fillna("Other")
     t = d.groupby(["group", "answer"]).size().reset_index(name="n")
     if t.empty:
         return no_data(title)
     t["pct"] = 100 * t["n"] / t.groupby("group")["n"].transform("sum")
 
-    order = [lab for lab in value_labels.values() if lab in set(t["answer"])]
+    order = list(dict.fromkeys(list(value_labels.values()) + ["Other"]))
+    order = [lab for lab in order if lab in set(t["answer"])]
     color_map = None
     if ordered:  # worst -> best scale: coral to navy
         pick = {3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 2, 3, 4]}[len(value_labels)]
         color_map = {lab: LIKERT[i] for lab, i in zip(value_labels.values(), pick)}
+        color_map["Other"] = GREY
     fig = px.bar(t, x="pct", y="group", color="answer", orientation="h", title=title,
                  category_orders={"answer": order}, custom_data=["n", "answer"],
                  color_discrete_sequence=PALETTE, color_discrete_map=color_map)
@@ -62,14 +65,20 @@ def distribution(df, var, value_labels, by, title, ordered=False):
     show(fig, 130 + 45 * t["group"].nunique())
 
 
+def share_selected(base, var, code):
+    """% of `base` who ticked option `code` of a select_multiple question.
+    An option nobody has ticked yet has no column at all, which means 0%."""
+    col = f"{var}_{str(code).replace('-', '_')}"
+    return 100 * base[col].eq(1).mean() if col in base else 0.0
+
+
 def multi_select(df, var, value_labels, title):
     """% of respondents choosing each option of a select_multiple question."""
-    base = df[df[var].notna()]
+    base = df[df[var].notna()]   # respondents who answered the question
     rows = []
     for code, lab in value_labels.items():
-        col = f"{var}_{str(code).replace('-', '_')}"
-        if col in base and len(base):
-            rows.append({"option": lab, "pct": 100 * base[col].mean()})
+        if len(base):
+            rows.append({"option": lab, "pct": share_selected(base, var, code)})
     if not rows:
         return no_data(title)
     t = pd.DataFrame(rows).sort_values("pct")
@@ -86,9 +95,8 @@ def before_after(df, before, after, value_labels, title):
     for when, var in [("Before", before), ("Now", after)]:
         base = df[df[var].notna()]
         for code, lab in value_labels.items():
-            col = f"{var}_{str(code).replace('-', '_')}"
-            if col in base and len(base):
-                rows.append({"option": lab, "when": when, "pct": 100 * base[col].mean()})
+            if len(base):
+                rows.append({"option": lab, "when": when, "pct": share_selected(base, var, code)})
     if not rows:
         return no_data(title)
     t = pd.DataFrame(rows)

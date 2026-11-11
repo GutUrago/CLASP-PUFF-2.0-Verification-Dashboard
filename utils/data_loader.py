@@ -136,9 +136,11 @@ def clean(raw):
         if col not in TEXT + SELECT_MULTIPLE + ["starttime", "endtime", "SubmissionDate"]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # select_multiple. The API sends one 0/1 column per option (PCRS_0_1,
-    # PCRS_0_2, ...). The charts use those columns, plus the field itself to
-    # know who was asked, so rebuild it as "1 4" from the options ticked.
+    # select_multiple. The API sends one column per option (PCRS_0_1,
+    # PCRS_0_2, ...) with 1 when it was ticked and blank otherwise. Anyone
+    # with at least one tick answered the question, so their blanks become 0;
+    # everyone else stays blank (not asked). The field itself is rebuilt as
+    # "1 4" from the ticks, so the charts know who answered.
     # (A file that has the field as "1 4 -96" instead gets the 0/1 columns.)
     new_cols = {}
     for field in SELECT_MULTIPLE:
@@ -149,7 +151,7 @@ def clean(raw):
             answered = ticks.notna().any(axis=1)
             picked = ticks.eq(1).apply(lambda row: " ".join(c for c, t in zip(codes, row) if t), axis=1)
             new_cols[field] = picked.where(answered)
-            new_cols.update({c: ticks[c] for c in options})
+            new_cols.update({c: ticks[c].eq(1).astype(float).where(answered) for c in options})
         elif df[field].notna().any():
             answered = df[field].notna()
             choices = df[field].fillna("").astype(str).str.replace(r"\.0\b", "", regex=True).str.split()
@@ -159,14 +161,16 @@ def clean(raw):
     df = df.drop(columns=[c for c in new_cols if c in df.columns])
     df = pd.concat([df, pd.DataFrame(new_cols, index=df.index)], axis=1)
 
-    # appliance_received and serial_verified were added to the form after the
-    # pilot (versions before 2611070342 don't send them). Rebuild them from the
-    # questions they come from, using the same formulas as the form.
-    if df["appliance_received"].isna().all():
-        df["appliance_received"] = (df["D1a"] != 7).astype(float).where(df["interview_ok"] == 1)
-    if df["serial_verified"].isna().all():
-        df["serial_verified"] = df["serial_match"].where(df["serial_access"] == 1, -97) \
-            .where(df["serial_access"].notna())
+    # appliance_received, appliance_in_use and serial_verified were added to
+    # the form over time, so older submissions don't have them. Fill the gaps
+    # row by row with the same formulas as the form.
+    interviewed = df["interview_ok"] == 1
+    received = (df["D1a"] != 7).astype(float).where(interviewed)
+    df["appliance_received"] = df["appliance_received"].fillna(received)
+    in_use = ((df["appliance_received"] == 1) & (df["D1"] == 1) & (df["D2"] != 2)).astype(float)
+    df["appliance_in_use"] = df["appliance_in_use"].fillna(in_use.where(interviewed))
+    serial = df["serial_match"].where(df["serial_access"] == 1, -97).where(df["serial_access"].notna())
+    df["serial_verified"] = df["serial_verified"].fillna(serial)
 
     # readable columns used by filters and charts
     df["date"] = df["starttime"].dt.normalize()

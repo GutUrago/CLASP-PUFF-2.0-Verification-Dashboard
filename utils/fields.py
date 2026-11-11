@@ -2,7 +2,7 @@
 The SurveyCTO fields the dashboard uses.
 
 Every name here was checked against the latest coded form
-(CLASP PUFF2 Verification Round 1, version 2611070342): all are marked
+(CLASP PUFF2 Verification Round 1, version 2611110448): all are marked
 publishable and none is disabled. Anything else the API returns is dropped
 when the data is loaded, so PII and unused fields never reach the app.
 
@@ -18,7 +18,7 @@ FIELDS = {
     ],
     "Contact and status": [
         "response", "consent", "availability", "consent_ok", "interview_ok",
-        "appliance_received", "reached_end", "survey_status", "survey_status_lbl",
+        "appliance_received", "appliance_in_use", "reached_end", "survey_status", "survey_status_lbl",
     ],
     "Appliance confirmation": ["B0", "B0a", "B1", "B1a", "B1b", "B2", "B8"],
     "Household": ["C1", "C2", "C3", "C4_screen", "C4_1", "C4_2", "C4_3", "C4_4", "C4_5", "C4_6", "C5"],
@@ -52,8 +52,9 @@ FIELDS = {
 # SurveyCTO adds these to every submission
 METADATA = ["KEY", "SubmissionDate", "formdef_version"]
 
-# select_multiple questions. The API sends one 0/1 column per option
-# (PCRS_0_1, PCRS_0_2, ..., PCRS_0__96 for -96), which are kept as well.
+# select_multiple questions. The API sends one column per option
+# (PCRS_0_1, PCRS_0_2, ..., PCRS_0__96 for -96) holding 1 when the option was
+# ticked and nothing otherwise. Those columns are kept as well.
 SELECT_MULTIPLE = ["D5b", "E1a", "E1b", "F1a", "F1b", "E3", "E6", "J6", "J8", "PCRS_0", "PCRS_1b", "L2"]
 
 # Text fields (everything else is converted to numbers)
